@@ -1,12 +1,15 @@
 ManifestFileVersion: 0
-CRC: 1213038184
+CRC: 293561926
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 5ee085de12f31da8c537a1231b3cf0d8
+    Hash: 24a6c436940fdadd0da1830ddbc8f085
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 8e7cb3822c565be8772f37329aec685c
+    Hash: d6ee0e2bb62ea241248ae2ff4f23c7d6
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 24a6c436940fdadd0da1830ddbc8f085
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -27,6 +30,9 @@ ClassTypes:
   Script: {fileID: 11500000, guid: 0706bed8897835946822b7fcb7618e12, type: 3}
 - Class: 115
   Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: AssetBundleTool.AssetMetaData
 Assets:
 - Assets/10.AssetBundlesTool/Prefabs/ZombunnyGreenAndroid.prefab
 Dependencies: []

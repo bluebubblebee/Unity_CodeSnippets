@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2452071019
+CRC: 2368409700
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: zombunnygreen.agt
+      Name: zombunnypurple.agt
       Dependencies: {}
     Info_1:
-      Name: zombunnypurple.agt
+      Name: zombunnygreen.agt
       Dependencies: {}
     Info_2:
       Name: zombunnyblue.agt

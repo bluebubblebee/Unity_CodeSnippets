@@ -1,12 +1,15 @@
 ManifestFileVersion: 0
-CRC: 208533523
+CRC: 1048348362
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 95a1ce7fd971e057956c7188df3a66c4
+    Hash: 8e8bb4068cc0f0793d967305a29f5d47
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 8e7cb3822c565be8772f37329aec685c
+    Hash: d6ee0e2bb62ea241248ae2ff4f23c7d6
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 8e8bb4068cc0f0793d967305a29f5d47
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -27,6 +30,9 @@ ClassTypes:
   Script: {fileID: 11500000, guid: 0706bed8897835946822b7fcb7618e12, type: 3}
 - Class: 115
   Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: AssetBundleTool.AssetMetaData
 Assets:
 - Assets/10.AssetBundlesTool/Prefabs/ZombunnyPurpleAndroid.prefab
 Dependencies: []
