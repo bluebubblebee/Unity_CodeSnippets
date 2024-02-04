@@ -14,26 +14,27 @@ public class UIToolkitMain : MonoBehaviour
 
     private int points = 0;
 
-    void Start()
+    private void OnEnable()
     {
         Debug.Log($"<color=cyan> Testing UIToolkitMain {GetType().Name} </color>");
 
         uiViewExample.RestartButton.clicked += RestartButton_onClick;
-        uiViewExample.StartGameButton.clicked += StartGameButton_onClick; 
+        uiViewExample.StartTimerButton.clicked += StartTimerButton_onClick;
+        uiViewExample.CloseButton.clicked += CloseButton_onClick;
     }
 
     private void OnDisable()
     {
         uiViewExample.RestartButton.clicked -= RestartButton_onClick;
-        uiViewExample.StartGameButton.clicked -= StartGameButton_onClick;
+        uiViewExample.StartTimerButton.clicked -= StartTimerButton_onClick;
+        uiViewExample.CloseButton.clicked -= CloseButton_onClick;
     }
 
     private void RestartButton_onClick()
     {
         points += 1;
-        //Debug.Log("<color=cyan> RestartButton_onClick called! Points:" + points + "</color>");
-
-       // uiViewExample.PointsLabel.text = "Points: " + points;
+        Debug.Log("<color=cyan> RestartButton_onClick called! Points:" + points + "</color>");
+        uiViewExample.PointsLabel.text = "Points: " + points;
 
         uiViewExample.NameTextField.value = "Bea!";
         uiViewExample.NameTextField.label = "Your name:";
@@ -43,31 +44,44 @@ public class UIToolkitMain : MonoBehaviour
         uiViewExample.PointsLabel.text = "Dot(cube1, cube2): " + dotCubes;
     }
 
-    private void StartGameButton_onClick()
+    private void StartTimerButton_onClick()
     {
         Debug.Log("<color=cyan> StartGameButton_onClick called!</color>");
-
-        Debug.Log("<color=cyan> Calling TestCoroutine  1</color>");
-        StartCoroutine(TestCoroutine());
-
-        Debug.Log("<color=cyan> Calling After TestCoroutine 4 </color>");
-
-        TestSortList();
+        Debug.Log("<color=cyan> Calling TimerCoroutine  1</color>");
+        timerCoroutine =  StartCoroutine(TimerCoroutine());
+        Debug.Log("<color=cyan> Calling After TimerCoroutine 5 </color>");
+        SortList();
     }
 
-    private IEnumerator TestCoroutine()
+    private Coroutine timerCoroutine;
+
+    private IEnumerator TimerCoroutine()
     {
-        Debug.Log("<color=cyan> TestCoroutine Start 2 </color>");
+        int currentTime = 10;
+        uiViewExample.TimerLabelText.text = "Time: " + currentTime;
+
+        Debug.Log("<color=cyan> TimerCoroutine Start 2 </color>");
         yield return new WaitForSeconds(2.0f);
-        Debug.Log("<color=cyan> TestCoroutine End  3</color>");
-        uiViewExample.Hide();
+        Debug.Log("<color=cyan> TimerCoroutine After 2 seconds 3</color>");
+        //uiViewExample.Hide();
+        while (currentTime >= 0)
+        {
+            yield return new WaitForSeconds(1.0f);
+            currentTime -= 1;
 
+            if (currentTime < 0)
+            {
+                currentTime = 0;
+            }
+            uiViewExample.TimerLabelText.text = "Time: " + currentTime;
+        }
+
+        Debug.Log("<color=cyan> TimerCoroutine End 4</color>");
     }
 
-    List<int> listNumb;
-    private void TestSortList()
+    private void SortList()
     {
-        listNumb = new List<int>();
+        List<int> listNumb = new List<int>();
 
         listNumb.Add(4);
         listNumb.Add(7);
@@ -81,36 +95,38 @@ public class UIToolkitMain : MonoBehaviour
         {
             listNumbStr += listNumb[index] + " ";
         }
-
         Debug.Log("<color=cyan>" + listNumbStr + "</color>");
 
-        int i = 1;
-
-        for (int current = 1; current < listNumb.Count; current++)
+        for (int i = 0; i < listNumb.Count; i++)
         {
-            i = current;
-            while ((i > 1) && (listNumb[i - 1] > listNumb[i]))
+            for (int j = i + 1; j < listNumb.Count; j++)
             {
-                if (listNumb[i - 1] > listNumb[i])
+                if (listNumb[i] > listNumb[j])
                 {
                     // Swap
-                    int temp = listNumb[i - 1];
-                    listNumb[i - 1] = listNumb[i];
-                    listNumb[i] = temp;
-
-                    i = i - 1;
+                    int temp = listNumb[i];
+                    listNumb[i] = listNumb[j];
+                    listNumb[j] = temp;
                 }
             }
         }
 
-        listNumbStr = "Sort List: ";
+        listNumbStr = "Sorted List: ";
         for (int index = 0; index < listNumb.Count; index++)
         {
             listNumbStr += listNumb[index] + " ";
         }
-
         Debug.Log("<color=cyan>" + listNumbStr + "</color>");
-
     }
 
+
+    private void CloseButton_onClick()
+    {
+        if (timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine);
+        }
+
+        uiViewExample.Hide();
+    }
 }

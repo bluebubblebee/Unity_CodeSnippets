@@ -11,6 +11,7 @@ Temp/
 Library/
 CodeSnippets/Temp/
 CodeSnippets/Library/
+CodeSnippets/Logs/*
 
 # Build results
 [Dd]ebug/

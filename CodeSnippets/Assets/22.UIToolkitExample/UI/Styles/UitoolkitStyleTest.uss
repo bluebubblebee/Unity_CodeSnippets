@@ -1,5 +1,6 @@
 .button {
     transition-duration: 0.25s;
+    -unity-font-style: bold;
 }
 
 .button:hover {

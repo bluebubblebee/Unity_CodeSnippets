@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 public class UIToolkitViewExample : MonoBehaviour
-{
-    
+{   
 
     public Label PointsLabel
     {
@@ -23,72 +22,77 @@ public class UIToolkitViewExample : MonoBehaviour
         }
     }
 
-    public VisualElement GameView
+    public Label TimerLabelText
     {
         get
         {
-            return uiDocument.rootVisualElement.Query<VisualElement>("StartGameView");
+            return uiDocument.rootVisualElement.Query<Label>("TimerLabel");
         }
-    }
+    }   
 
     public Button RestartButton
     {
         get
         {
-            if (uiDocument != null)
-            {
-                return uiDocument.rootVisualElement.Query<Button>("RestartButton");
-            }else
-            {
-                return null;
-            }  
+            return uiDocument.rootVisualElement.Query<Button>("RestartButton");
         }
     }
 
-    public Button StartGameButton
+    public Button StartTimerButton
     {
         get
         {
-            return uiDocument.rootVisualElement.Query<Button>("StartGameButton");
+            return uiDocument.rootVisualElement.Query<Button>("StartTimerButton");
         }
     }
 
-
-    public VisualElement Content
+    public Button CloseButton
     {
         get
         {
-            return uiDocument.rootVisualElement.Query<VisualElement>("Content");
+            return uiDocument.rootVisualElement.Query<Button>("CloseUIButton");
         }
     }
-
-    
 
 
 
     [SerializeField] private UIDocument uiDocument;
 
-    void Start()
+    private void OnEnable()
     {
         Debug.Log($"<color=cyan> Testing UIToolkitViewExample {GetType().Name} </color>");
 
         RestartButton.RegisterCallback<NavigationSubmitEvent>(RestartButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
-        StartGameButton.RegisterCallback<NavigationSubmitEvent>(StartGameButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
+        StartTimerButton.RegisterCallback<NavigationSubmitEvent>(StartTimerButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
+        CloseButton.RegisterCallback<NavigationSubmitEvent>(CloseButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
+    }
+
+    private void OnDisable()
+    {
+        RestartButton.UnregisterCallback<NavigationSubmitEvent>(RestartButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
+        StartTimerButton.UnregisterCallback<NavigationSubmitEvent>(StartTimerButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
+        CloseButton.UnregisterCallback<NavigationSubmitEvent>(CloseButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
     }
 
 
     private void RestartButton_NavigationSubmitEvent(NavigationSubmitEvent submitEvent)
     {}
 
-    private void StartGameButton_NavigationSubmitEvent(NavigationSubmitEvent submitEvent)
+    private void StartTimerButton_NavigationSubmitEvent(NavigationSubmitEvent submitEvent)
     {}
+
+    private void CloseButton_NavigationSubmitEvent(NavigationSubmitEvent submitEvent)
+    { }
+
 
     public void Hide()
     {
-
-        this.gameObject.SetActive(false);
-
+        gameObject.SetActive(false);
     }
-        
+
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
 
 }
