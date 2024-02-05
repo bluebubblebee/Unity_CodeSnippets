@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 namespace Utility
 {
@@ -21,6 +22,32 @@ namespace Utility
                 array[i] = array[idx];
                 array[idx] = tmp;
             }
+        }
+
+        public static List<int> BubbleSort(List<int> inList)
+        {
+            List<int> sortedList = new List<int>();
+
+            for (int i = 0; i < inList.Count; i++)
+            {
+                sortedList.Add(inList[i]);
+            }
+
+            for (int i = 0; i < sortedList.Count; i++)
+            {
+                for (int j = i + 1; j < sortedList.Count; j++)
+                {
+                    if (sortedList[i] > sortedList[j])
+                    {
+                        // Swap
+                        int temp = sortedList[i];
+                        sortedList[i] = sortedList[j];
+                        sortedList[j] = temp;
+                    }
+                }
+            }
+
+            return sortedList;
         }
 
         /// <summary>
