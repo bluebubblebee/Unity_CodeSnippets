@@ -217,7 +217,30 @@ namespace Utility
 
             return new Vector2(xPostion, yPostion);
         }
-        
+
+
+       
+
+        public static Vector3 CrossProduct(Vector3 A, Vector3 B)
+        {
+            Vector3 crossResult = Vector3.zero;
+
+            crossResult.x = A.y * B.z - A.z * B.y;
+            crossResult.y = A.z * B.x - A.x * B.z;
+            crossResult.z = A.x * B.y - A.y * B.x;
+
+            return crossResult;
+
+        }
+
+        public static Vector3 GetTriangleNormal(Vector3 A, Vector3 B, Vector3 C)
+        {
+            Vector3 edge1 = B - A;
+            Vector3 edge2 = C - A;
+            Vector3 normal = CrossProduct(edge1, edge2);
+            return normal;
+        }
+
     }
 }
 

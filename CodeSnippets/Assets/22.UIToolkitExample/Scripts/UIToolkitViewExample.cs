@@ -7,6 +7,8 @@ namespace CodeSnippets.UIToolkitExamples
 {
     public class UIToolkitViewExample : MonoBehaviour
     {
+        [SerializeField] private UIDocument document;
+
         public Label PointsLabel
         {
             get
@@ -81,6 +83,11 @@ namespace CodeSnippets.UIToolkitExamples
             RestartButton.UnregisterCallback<NavigationSubmitEvent>(RestartButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
             StartTimerButton.UnregisterCallback<NavigationSubmitEvent>(StartTimerButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
             CloseButton.UnregisterCallback<NavigationSubmitEvent>(CloseButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
+        }
+
+        private void Start()
+        {
+            var root = document.rootVisualElement;
         }
 
 
