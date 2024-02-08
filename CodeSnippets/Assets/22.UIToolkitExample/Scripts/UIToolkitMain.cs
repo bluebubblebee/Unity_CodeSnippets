@@ -20,8 +20,16 @@ namespace CodeSnippets.UIToolkitExamples
 
         private int points = 0;
 
-        private void OnEnable()
+        private void Start()
         {
+            uiViewExample.OnUIInitialized += OnInitializeCompleted;
+            uiViewExample.Initialize();
+        }
+
+        private void OnInitializeCompleted()
+        {
+            uiViewExample.OnUIInitialized -= OnInitializeCompleted;
+
             Debug.Log($"<color=cyan> Testing UIToolkitMain {GetType().Name} </color>");
 
             uiViewExample.RestartButton.clicked += RestartButton_onClick;
@@ -156,20 +164,6 @@ namespace CodeSnippets.UIToolkitExamples
 
             listNumb = MathUtility.BubbleSort(listNumb);
 
-            /*for (int i = 0; i < listNumb.Count; i++)
-            {
-                for (int j = i + 1; j < listNumb.Count; j++)
-                {
-                    if (listNumb[i] > listNumb[j])
-                    {
-                        // Swap
-                        int temp = listNumb[i];
-                        listNumb[i] = listNumb[j];
-                        listNumb[j] = temp;
-                    }
-                }
-            }*/
-
             listNumbStr = "Sorted List: ";
             for (int index = 0; index < listNumb.Count; index++)
             {
@@ -186,7 +180,9 @@ namespace CodeSnippets.UIToolkitExamples
                 StopCoroutine(timerCoroutine);
             }
 
-            uiViewExample.Hide();
+            uiViewExample.Root.style.visibility = Visibility.Hidden;
+
+            //uiViewExample.Hide();
         }
     }
 }

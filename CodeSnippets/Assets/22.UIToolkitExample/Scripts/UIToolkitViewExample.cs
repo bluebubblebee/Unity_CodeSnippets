@@ -7,7 +7,18 @@ namespace CodeSnippets.UIToolkitExamples
 {
     public class UIToolkitViewExample : MonoBehaviour
     {
-        [SerializeField] private UIDocument document;
+        [SerializeField] private UIDocument uiDocument;
+
+        public delegate void OnUIViewInitialized();
+        public OnUIViewInitialized OnUIInitialized;
+
+        public VisualElement Root
+        {
+            get
+            {
+                return uiDocument.rootVisualElement;
+            }
+        }
 
         public Label PointsLabel
         {
@@ -43,40 +54,59 @@ namespace CodeSnippets.UIToolkitExamples
 
         public Button RestartButton
         {
-            get
-            {
-                return uiDocument.rootVisualElement.Query<Button>("RestartButton");
-            }
+            get; private set;
         }
 
         public Button StartTimerButton
         {
-            get
-            {
-                return uiDocument.rootVisualElement.Query<Button>("StartTimerButton");
-            }
+            get; private set;
         }
 
         public Button CloseButton
         {
-            get
-            {
-                return uiDocument.rootVisualElement.Query<Button>("CloseUIButton");
-            }
+            get; private set;            
         }
 
 
+        public void Initialize()
+        {
+            SetUIReferences();
 
-        [SerializeField] private UIDocument uiDocument;
+            RegisterEvents();
 
-        private void OnEnable()
+            OnUIInitialized?.Invoke();
+        }
+
+        private void SetUIReferences()
+        {
+            StartTimerButton = uiDocument.rootVisualElement.Query<Button>("StartTimerButton");
+            RestartButton = uiDocument.rootVisualElement.Query<Button>("RestartButton");
+            CloseButton = uiDocument.rootVisualElement.Query<Button>("CloseUIButton");
+        }
+
+        private void RegisterEvents()
         {
             Debug.Log($"<color=cyan> Testing UIToolkitViewExample {GetType().Name} </color>");
 
-            RestartButton.RegisterCallback<NavigationSubmitEvent>(RestartButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
-            StartTimerButton.RegisterCallback<NavigationSubmitEvent>(StartTimerButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
-            CloseButton.RegisterCallback<NavigationSubmitEvent>(CloseButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
+            if (StartTimerButton != null)
+            {
+                StartTimerButton.RegisterCallback<NavigationSubmitEvent>(StartTimerButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
+            }
+
+            if (RestartButton != null)
+            {
+                RestartButton.RegisterCallback<NavigationSubmitEvent>(RestartButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
+            }
+          
+
+            if (CloseButton != null)
+            {
+                CloseButton.RegisterCallback<NavigationSubmitEvent>(CloseButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
+            }
+            
         }
+
+
 
         private void OnDisable()
         {
@@ -84,12 +114,6 @@ namespace CodeSnippets.UIToolkitExamples
             StartTimerButton.UnregisterCallback<NavigationSubmitEvent>(StartTimerButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
             CloseButton.UnregisterCallback<NavigationSubmitEvent>(CloseButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
         }
-
-        private void Start()
-        {
-            var root = document.rootVisualElement;
-        }
-
 
         private void RestartButton_NavigationSubmitEvent(NavigationSubmitEvent submitEvent)
         { }

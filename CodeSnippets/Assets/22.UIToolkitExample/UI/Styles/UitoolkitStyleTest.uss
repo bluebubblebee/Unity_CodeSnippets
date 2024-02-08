@@ -1,9 +1,48 @@
 .button {
     transition-duration: 0.25s;
-    -unity-font-style: bold;
+    -unity-font-style: normal;
+    -unity-font: url('project://database/Assets/0.Common/Fonts/CenturyGothic.TTF?fileID=12800000&guid=c6aff3ab2bfea7d459464720e8de49d7&type=3#CenturyGothic');
+    -unity-font-definition: initial;
+    position: relative;
+    flex-basis: auto;
+    width: 200px;
+    height: 45px;
+    font-size: 20px;
+    color: rgb(49, 0, 255);
+    background-color: rgb(255, 190, 143);
+    border-left-color: rgb(83, 0, 255);
+    border-right-color: rgb(83, 0, 255);
+    border-top-color: rgb(83, 0, 255);
+    border-bottom-color: rgb(83, 0, 255);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 10px;
+    opacity: 1;
+    justify-content: flex-start;
 }
 
 .button:hover {
+    transition-duration: 0.25s;
+    -unity-font-style: normal;
+    -unity-font: url('project://database/Assets/0.Common/Fonts/CenturyGothic.TTF?fileID=12800000&guid=c6aff3ab2bfea7d459464720e8de49d7&type=3#CenturyGothic');
+    -unity-font-definition: initial;
+    position: relative;
+    flex-basis: auto;
+    width: 200px;
+    height: 45px;
+    font-size: 20px;
+    color: rgb(49, 0, 255);
+    background-color: rgb(255, 190, 143);
+    border-left-color: rgb(83, 0, 255);
+    border-right-color: rgb(83, 0, 255);
+    border-top-color: rgb(83, 0, 255);
+    border-bottom-color: rgb(83, 0, 255);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 10px;
+    opacity: 1;
+    justify-content: flex-start;
     scale: 1.1 1.1;
-    background-color: rgb(255, 57, 57);
 }

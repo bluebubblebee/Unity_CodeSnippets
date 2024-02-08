@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/22.UIToolkitExample/UI/Styles/UitoolkitStyleTest.uss?fileID=7433441132597879392&amp;guid=f0e67dd4b313e9946b0acaaf8b19eef0&amp;type=3#UitoolkitStyleTest" />
+    <Style src="project://database/Assets/22.UIToolkitExample/UI/Styles/LableStyleTest.uss?fileID=7433441132597879392&amp;guid=e69694feb9d37ca49a823df657712887&amp;type=3#LableStyleTest" />
+    <ui:VisualElement style="flex-grow: 1; position: absolute; height: 303px; width: 887px; background-color: rgb(122, 88, 255); top: 19px; left: 25px; -unity-font: url(&apos;project://database/Assets/0.Common/Fonts/CenturyGothic.TTF?fileID=12800000&amp;guid=c6aff3ab2bfea7d459464720e8de49d7&amp;type=3#CenturyGothic&apos;);">
+        <ui:Button text="Start TImer" parse-escape-sequences="true" display-tooltip-when-elided="true" name="StartTimerButton" class="button" />
+        <ui:Button text="Hide UI" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CloseUIButton" class="button" style="position: absolute; top: 237px; left: 312px;" />
+        <ui:Button text="Restart" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RestartButton" class="button" style="position: absolute; top: 3px; left: 223px;" />
+        <ui:Label tabindex="-1" text="Testing" parse-escape-sequences="true" display-tooltip-when-elided="true" name="pointsLabel" class="label" style="top: 71px; left: 34px;" />
+        <ui:Label tabindex="-1" text="TimerLabel" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TimerLabel" class="label" style="top: 120px; left: 35px;" />
+        <ui:Label tabindex="-1" text="Message Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MessageLabel" class="label" style="top: 168px; left: 34px;" />
+        <ui:TextField picking-mode="Ignore" label="Name:" name="txtName" style="position: absolute; top: 18px; left: 463px; width: 382px; background-color: rgb(213, 246, 255); font-size: 15px; -unity-font-style: bold;" />
+    </ui:VisualElement>
+</ui:UXML>

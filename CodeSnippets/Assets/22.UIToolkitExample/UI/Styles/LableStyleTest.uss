@@ -1,0 +1,29 @@
+.label {
+    background-color: rgb(255, 255, 255);
+    width: 450px;
+    height: 40px;
+    position: absolute;
+    border-left-color: rgb(90, 197, 255);
+    border-right-color: rgb(90, 197, 255);
+    border-top-color: rgb(90, 197, 255);
+    border-bottom-color: rgb(90, 197, 255);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    -unity-font: url('project://database/Assets/0.Common/Fonts/CenturyGothic.TTF?fileID=12800000&guid=c6aff3ab2bfea7d459464720e8de49d7&type=3#CenturyGothic');
+    font-size: 15px;
+    text-overflow: ellipsis;
+    -unity-text-align: middle-left;
+    -unity-font-style: normal;
+    color: rgb(0, 0, 0);
+    -unity-text-outline-width: 0;
+    word-spacing: 0;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-self: auto;
+}
