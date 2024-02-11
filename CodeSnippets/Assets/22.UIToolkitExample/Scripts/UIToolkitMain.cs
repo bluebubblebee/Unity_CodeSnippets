@@ -9,7 +9,6 @@ namespace CodeSnippets.UIToolkitExamples
 {
     public class UIToolkitMain : MonoBehaviour
     {
-
         [Header("UI Scene")]
         [SerializeField] private UIToolkitViewExample uiViewExample;
 
@@ -17,6 +16,8 @@ namespace CodeSnippets.UIToolkitExamples
         [SerializeField] private GameObject cube2;
 
         [SerializeField] private Rotate[] shapesRotation;
+
+        [SerializeField] private TestAddressables testAddressable;
 
         private int points = 0;
 
@@ -35,6 +36,7 @@ namespace CodeSnippets.UIToolkitExamples
             uiViewExample.RestartButton.clicked += RestartButton_onClick;
             uiViewExample.StartTimerButton.clicked += StartTimerButton_onClick;
             uiViewExample.CloseButton.clicked += CloseButton_onClick;
+            uiViewExample.TestAddressablesButton.clicked += TestAddressablesButton_onClick;
         }
 
         private void OnDisable()
@@ -42,6 +44,7 @@ namespace CodeSnippets.UIToolkitExamples
             uiViewExample.RestartButton.clicked -= RestartButton_onClick;
             uiViewExample.StartTimerButton.clicked -= StartTimerButton_onClick;
             uiViewExample.CloseButton.clicked -= CloseButton_onClick;
+            uiViewExample.TestAddressablesButton.clicked -= TestAddressablesButton_onClick;
         }
 
         private void RestartButton_onClick()
@@ -68,6 +71,8 @@ namespace CodeSnippets.UIToolkitExamples
             
             TestShapeRotationTask();
         }
+
+       
 
         private async void TestShapeRotationTask()
         {
@@ -183,6 +188,13 @@ namespace CodeSnippets.UIToolkitExamples
             uiViewExample.Root.style.visibility = Visibility.Hidden;
 
             //uiViewExample.Hide();
+        }
+
+
+        private void TestAddressablesButton_onClick()
+        {
+            Debug.Log("<color=cyan>" + "TestAddressablesButton_onClick" + "</color>");
+            testAddressable.LoadAddressable();
         }
     }
 }

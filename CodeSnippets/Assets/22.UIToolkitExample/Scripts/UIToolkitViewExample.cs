@@ -67,6 +67,11 @@ namespace CodeSnippets.UIToolkitExamples
             get; private set;            
         }
 
+        public Button TestAddressablesButton
+        {
+            get; private set;
+        }
+
 
         public void Initialize()
         {
@@ -82,6 +87,7 @@ namespace CodeSnippets.UIToolkitExamples
             StartTimerButton = uiDocument.rootVisualElement.Query<Button>("StartTimerButton");
             RestartButton = uiDocument.rootVisualElement.Query<Button>("RestartButton");
             CloseButton = uiDocument.rootVisualElement.Query<Button>("CloseUIButton");
+            TestAddressablesButton = uiDocument.rootVisualElement.Query<Button>("TestAddressabeButton");
         }
 
         private void RegisterEvents()
@@ -96,17 +102,20 @@ namespace CodeSnippets.UIToolkitExamples
             if (RestartButton != null)
             {
                 RestartButton.RegisterCallback<NavigationSubmitEvent>(RestartButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
-            }
-          
+            }          
 
             if (CloseButton != null)
             {
                 CloseButton.RegisterCallback<NavigationSubmitEvent>(CloseButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
             }
-            
+
+            if (TestAddressablesButton != null)
+            {
+                TestAddressablesButton.RegisterCallback<NavigationSubmitEvent>(TestAddressablesButton_NavigationSubmitEvent, TrickleDown.TrickleDown);
+            }
+
+
         }
-
-
 
         private void OnDisable()
         {
@@ -123,6 +132,10 @@ namespace CodeSnippets.UIToolkitExamples
 
         private void CloseButton_NavigationSubmitEvent(NavigationSubmitEvent submitEvent)
         { }
+
+        private void TestAddressablesButton_NavigationSubmitEvent(NavigationSubmitEvent submitEvent)  { }
+
+        
 
 
         public void Hide()

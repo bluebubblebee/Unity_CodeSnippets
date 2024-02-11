@@ -42,7 +42,6 @@ namespace AssetBundleTool
 
         [SerializeField] private FileData m_FileData;
 
-        //[SerializeField] private List<GameObject> m_AssetBundleList;
         [SerializeField] private Transform m_AssetBundleParent;
 
         private int m_NumberBundlesLoaded;
@@ -207,17 +206,6 @@ namespace AssetBundleTool
 
             m_Progress = 100;
             UpdateProgressUI();
-
-
-
-
-            /*m_Progress = 100;
-            UpdateProgressUI();
-            m_UI.RemoveButton.interactable = true;
-            m_UI.DownloadButton.interactable = true;
-
-            */
-
         }
 
         private void WriteFileData(FileData a_file, string a_path)
@@ -237,7 +225,7 @@ namespace AssetBundleTool
             }
             catch (Exception e)
             {
-                Debug.Log("<color=purple>" + "[AssetBundleManager.WriteFileData] Exception trying to write fileData" + "</color>");
+                Debug.Log("<color=purple>" + "[AssetBundleManager.WriteFileData] Exception trying to write fileData: " + e.ToString() + "</color>");
             }
         }
        
@@ -483,8 +471,6 @@ namespace AssetBundleTool
                 using (UnityWebRequest webRequest = UnityWebRequestAssetBundle.GetAssetBundle(uri))
                 {
                     yield return webRequest.SendWebRequest();
-
-
 
                     if (webRequest.isNetworkError || webRequest.isHttpError)
                     {
