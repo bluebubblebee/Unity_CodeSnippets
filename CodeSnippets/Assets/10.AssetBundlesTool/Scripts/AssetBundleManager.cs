@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -71,10 +72,6 @@ namespace AssetBundleTool
             SetupDirectories();
 
 
-
-
-
-
             // Persisten data asset bundle
             //m_AssetBundlesPersistentPath = Path.Combine(Application.persistentDataPath, "AssetBundles");
 
@@ -113,8 +110,10 @@ namespace AssetBundleTool
             // None bundles loaded
             if (m_NumberBundlesLoaded == 0)
             {
-                StartCoroutine(LoadBundlesRoutine());
-            }else
+                //StartCoroutine(LoadBundlesRoutine());
+                LoadBundlesTask();
+            }
+            else
             {
                 m_UI.Messages = "All bundles downloaded";
             }
@@ -133,6 +132,74 @@ namespace AssetBundleTool
         }
 
         #region Load
+
+        private async void LoadBundlesTask()
+        {
+            m_UI.RemoveButton.interactable = false;
+            m_UI.DownloadButton.interactable = false;
+
+            m_Progress = 0;
+            UpdateProgressUI();
+
+            m_requestResult = await TaskDownloadIndexFile();           
+            if (!m_requestResult)
+            {
+                Debug.Log("<color=cyan>" + "[AssetBundleManager.LoadBundlesRoutine] File Index Downloaded Incorrectly " + "</color>");
+
+                return;
+            }
+
+            Debug.Log("<color=cyan>" + "[AssetBundleManager.LoadBundlesRoutine] File Index Downloaded Correctly " + "</color>");
+
+            m_Progress = 1;
+            UpdateProgressUI();
+
+            if (!File.Exists(m_localIndexFileUrl))// File exists
+            {
+                // Save file from first time
+                m_localDataFile = m_cloundDataFile;
+                WriteFileData(m_localDataFile, m_localIndexFileUrl);
+            }
+            else
+            {
+                m_requestResult = false;
+                if (!LoadIndexFileFromLocal())
+                {
+                    Debug.Log("<color=cyan>" + "[AssetBundleManager.LoadBundlesRoutine] Local File Index Loaded Incorrectly " + "</color>");
+                   return;
+                }
+
+                Debug.Log("<color=cyan>" + "[AssetBundleManager.LoadBundlesRoutine] Local File Index loaded Correctly " + "</color>");
+            }
+
+            // Compare both files
+            CheckDataFiles(m_localDataFile, m_cloundDataFile);
+
+            if (m_FileData.Data.Count == 0)
+            {
+                Utility.UICodeSnippets.Instance.Log += "<color=red>" + "There are (0) asset bundles to load" + "\n</color>";
+                Debug.Log("<color=cyan>" + "[AssetBundleManager] No Bundles to load " + "</color>");
+            }
+            else
+            {
+                for (int i = 0; i < m_FileData.Data.Count; i++)
+                {
+                    await TaskRequestAssetBundle(m_FileData.Data[i]);
+
+                    int delaySeconds = 2;
+                    await Task.Delay(delaySeconds * 1000);
+                }
+            }
+
+            m_UI.RemoveButton.interactable = true;
+            m_UI.DownloadButton.interactable = true;
+
+            m_Progress = 100;
+            UpdateProgressUI();
+
+
+        }
+
         private IEnumerator LoadBundlesRoutine()
         {
             m_UI.RemoveButton.interactable = false;
@@ -141,24 +208,23 @@ namespace AssetBundleTool
             m_Progress = 0;
             UpdateProgressUI();
 
+            m_requestResult = false;           
 
-            // TODO: CHECK INTERNET
-            m_requestResult = false;
             yield return DownloadIndexFile();
 
             if (!m_requestResult)
             {
-                Debug.Log("<color=purple>" + "[AssetBundleManager.LoadBundlesRoutine] File Index Downloaded Incorrectly " + "</color>");
+                Debug.Log("<color=cyan>" + "[AssetBundleManager.LoadBundlesRoutine] File Index Downloaded Incorrectly " + "</color>");
 
                 yield return null;
             }
 
-            Debug.Log("<color=purple>" + "[AssetBundleManager.LoadBundlesRoutine] File Index Downloaded Correctly " + "</color>");
+            Debug.Log("<color=cyan>" + "[AssetBundleManager.LoadBundlesRoutine] File Index Downloaded Correctly " + "</color>");
 
             m_Progress = 1;
             UpdateProgressUI();
 
-            Debug.Log("<color=purple>" + "[AssetBundleManager.LoadIndexFileAssetBundlesFromLocal] Load Index File from : " + m_localIndexFileUrl + "</color>");
+            Debug.Log("<color=cyan>" + "[AssetBundleManager.LoadIndexFileAssetBundlesFromLocal] Load Index File from : " + m_localIndexFileUrl + "</color>");
 
             if (!File.Exists(m_localIndexFileUrl))// File exists
             {
@@ -166,28 +232,23 @@ namespace AssetBundleTool
                 m_localDataFile = m_cloundDataFile;
 
                 WriteFileData(m_localDataFile, m_localIndexFileUrl);
-
             }
             else
             {
                 m_requestResult = false;
-                yield return LoadIndexFileFromLocal();
+                LoadIndexFileFromLocal();
                 if (!m_requestResult)
                 {
                     Debug.Log("<color=purple>" + "[AssetBundleManager.LoadBundlesRoutine] Local File Index Loaded Incorrectly " + "</color>");
-
-                    // Save file
-
                     yield return null;
                 }
 
                 Debug.Log("<color=purple>" + "[AssetBundleManager.LoadBundlesRoutine] Local File Index loaded Correctly " + "</color>");
-
             }
 
 
             // Compare both files
-            yield return CheckDataFiles(m_localDataFile, m_cloundDataFile);
+            CheckDataFiles(m_localDataFile, m_cloundDataFile);
 
             if (m_FileData.Data.Count == 0)
             {
@@ -211,7 +272,6 @@ namespace AssetBundleTool
         private void WriteFileData(FileData a_file, string a_path)
         {
             if (a_file == null) return;
-
             try
             {
                 if (File.Exists(a_path))
@@ -228,7 +288,69 @@ namespace AssetBundleTool
                 Debug.Log("<color=purple>" + "[AssetBundleManager.WriteFileData] Exception trying to write fileData: " + e.ToString() + "</color>");
             }
         }
-       
+
+        private async Task<bool> TaskDownloadIndexFile()
+        {
+            m_requestResult = false;
+            if (string.IsNullOrEmpty(m_indexFileData))
+            {
+                Debug.Log("<color=purple>" + "[AssetBundleManager.TaskDownloadIndexFile] Error: Index File Data is null or empty" + "</color>");
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(m_uri))
+            {
+                Debug.Log("<color=cyan>" + "[AssetBundleManager.TaskDownloadIndexFile] Error: uri is null or empty" + "</color>");
+                return false;
+            }
+
+            UnityWebRequest webRequest = UnityWebRequest.Get(m_uri);
+            webRequest.SendWebRequest();
+            await Task.Yield();
+            if (webRequest.result == UnityWebRequest.Result.ConnectionError)
+            {
+                Debug.Log("<color=cyan>" + "[AssetBundleManager.TaskDownloadIndexFile] Webrequest Error: " + webRequest.error + "</color>");
+                return false;
+            }else
+            {
+                while (webRequest.result == UnityWebRequest.Result.InProgress)
+                {
+                    Debug.Log("<color=cyan>" + "[AssetBundleManager.TaskDownloadIndexFile] Webrequest InProgress: " + webRequest.downloadProgress + "</color>");
+                    await Task.Yield();
+                }
+
+                if (webRequest.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log("<color=cyan>" + "[AssetBundleManager.TaskDownloadIndexFile] Webrequest result: " + webRequest.result + "</color>");
+                    return false;
+                }
+
+                Debug.Log("<color=cyan>" + "[AssetBundleManager.TaskDownloadIndexFile] Webrequest Success: " + webRequest.downloadHandler.text + "</color>");
+                FileData data = new FileData();
+                if (!string.IsNullOrEmpty(webRequest.downloadHandler.text))
+                {
+                    try
+                    {
+                        m_cloundDataFile = JsonUtility.FromJson<FileData>(webRequest.downloadHandler.text);
+                        m_requestResult = true;
+                        return true;
+
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.Log("<color=cyan>" + "[AssetBundleManager.TaskDownloadIndexFile] Webrequest Fail: " + e.ToString() + "</color>");
+                    }
+
+                }
+                else
+                {
+                    Debug.Log("<color=cyan>" + "[AssetBundleManager.DownloadIndexFile] Error: Json Cloud Index File is empty or null " + "</color>");
+                    Utility.UICodeSnippets.Instance.Log += "<color=red>" + "Error: Json Cloud Index File is empty or null" + "\n</color>";
+                }
+            }
+
+            return false;
+        }
 
         private IEnumerator DownloadIndexFile()
         {
@@ -247,7 +369,7 @@ namespace AssetBundleTool
             {
                 yield return webRequest.SendWebRequest();
 
-                if (webRequest.isNetworkError)
+                if (webRequest.result == UnityWebRequest.Result.ConnectionError)
                 {
                     Debug.Log("<color=purple>" + "[AssetBundleManager.DownloadIndexFile] Webrequest Error: " + webRequest.error + "</color>");
                     
@@ -284,7 +406,7 @@ namespace AssetBundleTool
             }
         }
 
-        private IEnumerator LoadIndexFileFromLocal()
+        private bool LoadIndexFileFromLocal()
         {
             m_requestResult = false;
             
@@ -304,11 +426,13 @@ namespace AssetBundleTool
                     {
                         m_localDataFile = JsonUtility.FromJson<FileData>(jsonData);
                         m_requestResult = true;
+                        
                     }
                     catch (Exception e)
                     {
                         Utility.UICodeSnippets.Instance.Log += "<color=red>" + "ERROR: Malformed Json Local Index File" + "\n</color>";
                         Debug.Log("<color=purple>" + "[AssetBundleManager.LoadIndexFileFromLocal] ERROR: Malformed index JSON Local File" + "</color>");
+                        return false;
                     }
                 }
                 else
@@ -316,19 +440,20 @@ namespace AssetBundleTool
                     Debug.Log("<color=purple>" + "[AssetBundleManager.LoadIndexFileFromLocal] Error: Json Local Index File is empty or null " + "</color>");
 
                     Utility.UICodeSnippets.Instance.Log += "<color=red>" + "Error: Json Local Index File is empty or null" + "\n</color>";
+                    return false;
                 }
-            }
-            yield return null;
-            
+
+                return true;
+            }            
         }
 
 
-        private IEnumerator CheckDataFiles(FileData a_localData, FileData a_cloudData)
+        private void CheckDataFiles(FileData a_localData, FileData a_cloudData)
         {
             if ((a_localData == null) || 
                 (a_cloudData == null) || 
                 (a_localData.Data == null) || 
-                (a_cloudData.Data == null)) yield return null;
+                (a_cloudData.Data == null)) return;
 
 
             for (int iServer = 0; iServer < a_cloudData.Data.Count; iServer++)
@@ -373,8 +498,6 @@ namespace AssetBundleTool
 
             // Update local file
             WriteFileData(m_FileData, m_localIndexFileUrl);
-
-            yield return new WaitForSeconds(0.5f);
         }
 
         private bool FindDataInFileData(FileData a_fileData, IndexFile a_data)
@@ -392,6 +515,131 @@ namespace AssetBundleTool
             }
 
             return false;
+        }
+
+        private async Task<bool> TaskRequestAssetBundle(IndexFile a_data)
+        {
+            if (a_data == null)
+            {
+                return false;
+            }
+
+            string bundleName = string.Empty;
+#if UNITY_ANDROID || UNITY_EDITOR
+            bundleName = a_data.AndroidFile;
+#elif UNITY_IOS
+            bundleName = a_data.IOSFile;
+#endif
+
+            if (string.IsNullOrEmpty(bundleName))
+            {
+                return false;
+            }
+            Debug.Log("<color=cyan>" + "[AssetBundleManager.RequestAssetBundle] Requesting " + bundleName + " </color>");
+
+            while (!Caching.ready)
+            {
+                await Task.Yield();
+            }
+
+            string bundlePath = Path.Combine(m_localDirectory, bundleName);
+
+            // Load asset from local
+            if (a_data.BundleAction == EBundleAction.LOADFROMLOCAL)
+            {
+                // Check if reload
+                bool loadFromLocal = true;
+
+                // Check if there is an existing element in memory
+                if (a_data.BundleObject != null)
+                {
+                    // Different name, destroy existing
+                    if (a_data.ID != a_data.BundleObject.name)
+                    {
+                        Destroy(a_data.BundleObject);
+                        await Task.Yield();
+                    }
+                    else
+                    {
+                        loadFromLocal = false;
+                    }
+                }
+
+                if (loadFromLocal && (File.Exists(bundlePath)))
+                {
+                    // Load from file and wait for completion
+                    AssetBundle localBundle = AssetBundle.LoadFromFile(bundlePath);
+                    AssetBundleRequest requestLocal = localBundle.LoadAllAssetsAsync();
+                    await Task.Yield();
+
+                    if (requestLocal.allAssets != null)
+                    {
+                        a_data.BundleObject = ProcessAssetBundleRequest(requestLocal, a_data.ID);
+                    }
+
+                    // Unload the AssetBundles compressed contents to conserve memory
+                    localBundle.Unload(false);
+                }
+                else
+                {
+                    // If in this point (this should not happens) the file doesn't exit, set action to load from server
+                    a_data.BundleAction = EBundleAction.LOADFROMSERVER;
+                }
+            }
+
+            if (a_data.BundleAction == EBundleAction.LOADFROMSERVER)
+            {
+                string uri = Path.Combine(m_assetBundlesUrl, bundleName);
+                UnityWebRequest webRequest = UnityWebRequestAssetBundle.GetAssetBundle(uri);
+                await Task.Yield();
+                webRequest.SendWebRequest();               
+
+                if (webRequest.result == UnityWebRequest.Result.ConnectionError)
+                {
+                    Debug.Log("<color=cyan>" + "[AssetBundleManager.TaskDownloadIndexFile] Webrequest Error: " + webRequest.error + "</color>");
+                    return false;
+                }
+                else
+                {
+                    while (webRequest.result == UnityWebRequest.Result.InProgress)
+                    {
+                        await Task.Yield();
+                    }
+
+                    Debug.Log("<color=cyan>" + "[AssetBundleManager.RequestAssetBundle] Asset Bundle downloaded: " + webRequest.downloadedBytes + "</color>");
+                    // Get downloaded asset bundle
+                    AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(webRequest);
+
+                    if (bundle == null)
+                    {
+                        Debug.Log("<color=cyan>" + "[AssetBundleManager.RequestAssetBundle] Asset Bundle is null " + "</color>");
+
+                        return false;
+                    }
+
+                    // Load the object asynchronously
+                    AssetBundleRequest request = bundle.LoadAllAssetsAsync();
+                    await Task.Yield();
+                    // Wait for completion
+                    if (request.allAssets != null)
+                    {
+                        // Destroy existing object
+                        if (a_data.BundleObject != null)
+                        {
+                            Destroy(a_data.BundleObject);
+                        }
+                        await Task.Yield();
+
+                        a_data.BundleObject = ProcessAssetBundleRequest(request, bundleName);
+                    }
+
+                    bundle.Unload(false);
+                }
+
+            }
+
+            return true;
+
         }
 
         private IEnumerator RequestAssetBundle(IndexFile a_data)
@@ -464,15 +712,13 @@ namespace AssetBundleTool
 
             if (a_data.BundleAction == EBundleAction.LOADFROMSERVER)
             {
-                string uri = Path.Combine(m_assetBundlesUrl, bundleName);
-
-               
+                string uri = Path.Combine(m_assetBundlesUrl, bundleName);               
 
                 using (UnityWebRequest webRequest = UnityWebRequestAssetBundle.GetAssetBundle(uri))
                 {
                     yield return webRequest.SendWebRequest();
 
-                    if (webRequest.isNetworkError || webRequest.isHttpError)
+                    if (webRequest.result == UnityWebRequest.Result.ConnectionError)
                     {
                         Debug.Log("<color=purple>" + "[AssetBundleManager.RequestAssetBundle] Webrequest Error: " + webRequest.error + "</color>");
                         yield return null;
@@ -546,11 +792,11 @@ namespace AssetBundleTool
 
                         }else
                         {
-                            Debug.Log("<color=purple>" + "[AssetBundleManager] AssetObject Metadata not found in: " + assetID + "</color>");
+                            Debug.Log("<color=cyan>" + "[AssetBundleManager] AssetObject Metadata not found in: " + assetID + "</color>");
                         }
                     }else
                     {
-                        Debug.Log("<color=purple>" + "[AssetBundleManager] AssetObject not found in: " + assetID + "</color>");
+                        Debug.Log("<color=cyan>" + "[AssetBundleManager] AssetObject not found in: " + assetID + "</color>");
                     }
 
                     return instantiatedGO;
