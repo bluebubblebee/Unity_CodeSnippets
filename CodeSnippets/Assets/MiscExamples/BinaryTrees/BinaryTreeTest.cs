@@ -24,6 +24,8 @@ public class Node
             // Stop when left is null
             if (left == null)
             {
+                Debug.Log("<color=cyan>"+ "Added " + n.key + " to left side (n.key < key) " +  "</color>");
+
                 left = n;
             }
             else
@@ -37,6 +39,7 @@ public class Node
             // Stop when right is null
             if (right == null)
             {
+                Debug.Log("<color=cyan>" + "Added " + n.key + " to right side (n.key > key) " + "</color>");
                 right = n;
             }
             else
@@ -45,8 +48,11 @@ public class Node
                 right.AddNode(n);
             }
         }
+        else
+        {
+            Debug.Log("<color=cyan>" + "Node " + n.key + " already added " + "</color>");
+        }
 
-        // Equal nothing happens
     }
 
     public void Visit()
@@ -56,7 +62,7 @@ public class Node
             left.Visit();
         }
 
-        Debug.Log("<color=cyan>" + key + "</color>");
+        //Debug.Log("<color=cyan>" + key + "</color>");
 
         if (right != null)
         {
@@ -94,6 +100,7 @@ public class BinaryTree
     {
         if (root == null)
         {
+            Debug.Log("<color=cyan>" + "Added " + n.key + " as root of binary tree " + "</color>");
             root = n;
         }
         else
@@ -126,10 +133,10 @@ public class BinaryTreeTest : MonoBehaviour
     {
         m_tree = new BinaryTree();
 
-        Node n = new Node(5);
+        Node n = new Node(Random.Range(1, 15));
 
-        NodeObject rootObj = Instantiate(m_nodePrefab);
-        rootObj.Initialize(n);
+        // NodeObject rootObj = Instantiate(m_nodePrefab);
+        //rootObj.Initialize(n);
         m_tree.AddNode(n);
 
         for (int i=0; i< 50; i++)
@@ -137,17 +144,17 @@ public class BinaryTreeTest : MonoBehaviour
             int randomValue = Random.Range(0, 100);
             Node randNode = new Node(randomValue);            
 
-            NodeObject newNode = Instantiate(m_nodePrefab);
-            newNode.Initialize(randNode);
+            //NodeObject newNode = Instantiate(m_nodePrefab);
+            //newNode.Initialize(randNode);
 
             m_tree.AddNode(randNode);
 
         }
 
-        Node fixedNode = new Node(20);
+        //Node fixedNode = new Node(20);
 
-        NodeObject newNode3 = Instantiate(m_nodePrefab);
-        newNode3.Initialize(fixedNode);
+        //NodeObject newNode3 = Instantiate(m_nodePrefab);
+        //newNode3.Initialize(fixedNode);
 
        // m_tree.AddNode(fixedNode);
 
