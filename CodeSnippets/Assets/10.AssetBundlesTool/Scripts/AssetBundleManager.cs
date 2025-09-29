@@ -46,7 +46,7 @@ namespace AssetBundleTool
         [SerializeField] private Transform m_AssetBundleParent;
 
         private int m_NumberBundlesLoaded;
-        private int m_TotalBundlesToLoad;
+        //private int m_TotalBundlesToLoad;
 
         
         private int m_Progress = 0;
@@ -85,7 +85,7 @@ namespace AssetBundleTool
             
 
             m_NumberBundlesLoaded = 0;
-            m_TotalBundlesToLoad = 0;
+            //m_TotalBundlesToLoad = 0;
 
             m_FileData = new FileData();
         }
@@ -389,7 +389,7 @@ namespace AssetBundleTool
                     }
                     catch (Exception e)
                     {
-                        Utility.UICodeSnippets.Instance.Log += "<color=red>" + "ERROR: Malformed Json Cloud Index File" + "\n</color>";
+                        Utility.UICodeSnippets.Instance.Log += "<color=red>" + "ERROR: Malformed Json Cloud Index File" + e.ToString() + "\n</color>";
                         Debug.Log("<color=purple>" + "[AssetBundleManager] ERROR: Malformed index JSON SERVER File" + "</color>");
                     }
                 }
@@ -430,7 +430,7 @@ namespace AssetBundleTool
                     }
                     catch (Exception e)
                     {
-                        Utility.UICodeSnippets.Instance.Log += "<color=red>" + "ERROR: Malformed Json Local Index File" + "\n</color>";
+                        Utility.UICodeSnippets.Instance.Log += "<color=red>" + "ERROR: Malformed Json Local Index File"+ e.ToString() + "\n</color>";
                         Debug.Log("<color=purple>" + "[AssetBundleManager.LoadIndexFileFromLocal] ERROR: Malformed index JSON Local File" + "</color>");
                         return false;
                     }

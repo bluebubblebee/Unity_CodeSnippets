@@ -12,7 +12,7 @@ namespace Utility
     {
 
         public delegate void ClickAction(TextButton button);
-        public event ClickAction OnButtonClicked;
+        //public event ClickAction OnButtonClicked;
 
         [SerializeField] private Button m_ButtonComponent;
         public Button ButtonComponent

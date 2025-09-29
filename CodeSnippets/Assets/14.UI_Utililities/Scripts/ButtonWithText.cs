@@ -9,7 +9,7 @@ namespace Utility
     public class ButtonWithText : UIBase
     {
         public delegate void ButtonWithTextAction(ButtonWithText button);
-        public event ButtonWithTextAction OnButtonClicked;
+        //public event ButtonWithTextAction OnButtonClicked;
 
         [SerializeField] private EventTrigger m_EventTrigger;
         public EventTrigger EventTriggerComponent

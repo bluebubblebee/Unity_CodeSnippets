@@ -5,7 +5,7 @@ namespace MessageQueue
 {
     public abstract class DependencyBuilder : MonoBehaviour
     {
-        public event Action<DependencyContainer> ContainerConstructed;
+        //public event Action<DependencyContainer> ContainerConstructed;
 
         [SerializeField] private CommandBuilder m_commandBuilder;
 
