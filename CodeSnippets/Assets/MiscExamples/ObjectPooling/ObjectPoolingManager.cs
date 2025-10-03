@@ -2,39 +2,73 @@
 using System.Collections.Generic;
 using System.Collections;
 
-public class ObjectPoolingManager : MonoBehaviour {
-
-    #region FIELDS
-    public List<GameObject> objectToRecycle = new List<GameObject>(); // Used to keep traking od the objects that we can use in the game
-    public Transform originlPoolPosition; // used to reset the position of the object that we've pulled
-    private GameObject selectedObject;
-	#endregion
-	
-	#region MONOBHEAVIOR
-	void Start() {
-        InvokeRepeating("Shot", 1.0f, 2f); //Shot an object every 2 seconds
-    }
-
-    private void Shot()
+namespace ObjectPoolExample
+{
+    public class ObjectPoolingManager : MonoBehaviour
     {
-        this.SetObjectFromPools();
-        this.selectedObject.transform.position = Vector3.zero; // Move the object to the center
-        StartCoroutine(ResetTheObject());
-    }
+        [SerializeField]
+        private TestPoolInstance m_instancePrefab;
 
-    //Get an object from the pool and remove it from the pool once is selected
-    private void SetObjectFromPools()
-    {
-        this.selectedObject = this.objectToRecycle[Random.Range(0, this.objectToRecycle.Count)];
-        this.objectToRecycle.Remove(this.selectedObject);
-    }
+        [SerializeField]
+        private Transform m_parentTransform;
 
-    //Readd the object to the pool and reset his position
-    private IEnumerator ResetTheObject()
-    {
-        yield return new WaitForSeconds(1);
-        this.selectedObject.transform.position = originlPoolPosition.position;
-        this.objectToRecycle.Add(this.selectedObject);
+        [SerializeField]
+        private int m_poolSize = 20;
+
+        private UnityObjectPool<TestPoolInstance> m_objectPoolTest;
+        private Coroutine m_testPoolRoutine;
+        private int m_indexInstance;
+        private Vector3 m_currentInstancePosition;
+
+
+        void Start()
+        {
+            m_objectPoolTest = new UnityObjectPool<TestPoolInstance>(InstanceTest, m_instancePrefab, DisposeTest, m_poolSize);
+
+            m_indexInstance = 0;
+            m_currentInstancePosition = Vector3.zero;
+            m_testPoolRoutine = StartCoroutine(TestPool());
+        }
+
+        private void OnDestroy()
+        {
+            m_objectPoolTest.Dispose();
+
+            if (m_testPoolRoutine != null)
+            {
+                StopCoroutine(m_testPoolRoutine);
+                m_testPoolRoutine = null;
+            }
+        }
+
+        private IEnumerator TestPool()
+        {
+            while (m_indexInstance < m_poolSize)
+            {              
+
+                TestPoolInstance instance = m_objectPoolTest.Get();
+
+                if (instance != null)
+                {
+                    instance.Setup(m_currentInstancePosition);
+
+                    m_currentInstancePosition.x += 2;
+                }
+
+                yield return new WaitForSeconds(2.0f);
+            }    
+        }
+
+        private TestPoolInstance InstanceTest(TestPoolInstance prefab)
+        {
+            TestPoolInstance instance = Instantiate(prefab, m_parentTransform, true);
+            instance.Initialize();
+            return instance;
+        }
+
+        private void DisposeTest(TestPoolInstance instance)
+        {
+            Destroy(instance.gameObject);
+        }        
     }
-	#endregion
 }
